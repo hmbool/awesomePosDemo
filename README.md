@@ -1,6 +1,8 @@
 # awesomepos
 
 > A Vue.js project
+## 技术栈为：Vue+Webpack+Element+Axios+vueRouter
+
 
 ## Build Setup
 
