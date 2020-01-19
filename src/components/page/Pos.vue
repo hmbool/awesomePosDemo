@@ -1,105 +1,131 @@
 <template>
-  <div class="pos">
-    <div>
-      <el-row>
-        <el-col :span="7" class="pos-order" id="order-list">
-          <el-tabs>
-            <el-tab-pane label="点餐">
-              <el-table :data="tableData" border=""style="width:100%">
-                <el-table-column prop="goodsName" label="商品名称"></el-table-column>
-                <el-table-column prop="count" label="数量" width="70"></el-table-column>
-                <el-table-column prop="price" label="金额" width="70%"></el-table-column>
-                <el-table-column label="操作" width="100%" fixed="right">
-                  <template slot-scope="scope">
-                    <!--.scope这个属性在最新版本vue已经被弃用，升级成slot-scope了 ，所以属性名应该改为slot-scope-->
-                    <el-button type="text" size="small" @click="delSingleGoods(scope.row)">删除</el-button>
-                    <el-button type="text" size="small" @click="addOrderList(scope.row)">增加</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <div class="div-btn">
-                <el-button type="warning">挂单</el-button>
-                <el-button type="danger">删除</el-button>
-                <el-button type="success">结账</el-button>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="挂单"></el-tab-pane>
-            <el-tab-pane label="外卖"></el-tab-pane>
-          </el-tabs>
-        </el-col>
-        <!--商品展示-->
-        <el-col :span="17">
-          <div class="often-goods">
-            <div class="title">常用商品</div>
-            <div class="often-goods-list">
-              <ul>
-                <li v-for="goods in oftenGoods" @click="addOrderList(goods)">
-                  <span>{{goods.goodsName}}</span>
-                  <span class="o-price">￥{{goods.price}}元</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="goods-type">
-            <el-tabs>
-              <el-tab-pane label="汉堡">
-                <div>
-                  <span class="cookList">
-                    <li v-for="goods in type0Goods" @click="addOrderList(goods)">
-                      <span class="foodImg">
-                        <img class="goodsimg":src="goods.goodsImg">
-                      </span>
-                      <span class="foodName">{{goods.goodsName}}</span>
-                      <span class="foodPrice">￥{{goods.price}}元</span>
-                    </li>
-                  </span>
-                </div>
-              </el-tab-pane>
-              <el-tab-pane label="小食">
-                <div>
-                  <span class="cookList">
-                    <li v-for="goods in type1Goods" @click="addOrderList(goods)">
-                      <span class="foodImg">
-                        <img class="goodsimg":src="goods.goodsImg">
-                      </span>
-                      <span class="foodName">{{goods.goodsName}}</span>
-                      <span class="foodPrice">￥{{goods.price}}元</span>
-                    </li>
-                  </span>
-                </div>
-              </el-tab-pane>
-              <el-tab-pane label="饮料">
-                <div>
-                  <span class="cookList">
-                    <li v-for="goods in type2Goods" @click="addOrderList(goods)">
-                      <span class="foodImg">
-                        <img class="goodsimg":src="goods.goodsImg">
-                      </span>
-                      <span class="foodName">{{goods.goodsName}}</span>
-                      <span class="foodPrice">￥{{goods.price}}元</span>
-                    </li>
-                  </span>
-                </div>
-              </el-tab-pane>
-              <el-tab-pane label="套餐">
-                <div>
-                  <span class="cookList">
-                    <li v-for="goods in type3Goods" @click="addOrderList(goods)">
-                      <span class="foodImg">
-                        <img class="goodsimg":src="goods.goodsImg">
-                      </span>
-                      <span class="foodName">{{goods.goodsName}}</span>
-                      <span class="foodPrice">￥{{goods.price}}元</span>
-                    </li>
-                  </span>
-                </div>
-              </el-tab-pane>
-            </el-tabs>
-          </div>
-        </el-col>
-      </el-row>
+    <div class="pos">
+        <div>
+            <el-row>
+                <el-col :span="7" class="pos-order" id="order-list">
+                    <el-tabs>
+                        <el-tab-pane label="点餐">
+                            <el-table :data="tableData" border="" style="width:100%">
+                                <el-table-column prop="goodsName" label="商品名称"></el-table-column>
+                                <el-table-column prop="count" label="数量" width="70"></el-table-column>
+                                <el-table-column prop="price" label="金额" width="70%"></el-table-column>
+                                <el-table-column label="操作" width="100%" fixed="right">
+                                    <template slot-scope="scope">
+                                        <!--.scope这个属性在最新版本vue已经被弃用，升级成slot-scope了 ，所以属性名应该改为slot-scope-->
+                                        <el-button
+                                            type="text"
+                                            size="small"
+                                            @click="delSingleGoods(scope.row)"
+                                        >删除</el-button>
+                                        <el-button
+                                            type="text"
+                                            size="small"
+                                            @click="addOrderList(scope.row)"
+                                        >增加</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                            <div class="totalDiv">
+                                <small>数量:</small>
+                                {{totalCount}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <small>金额：</small>
+                                {{totalMoney}}元
+                            </div>
+                            <div class="div-btn">
+                                <el-button type="warning">挂单</el-button>
+                                <el-button type="danger" @click="delAllGoods()">删除</el-button>
+                                <el-button type="success" @click="checkout()">结账</el-button>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="挂单"></el-tab-pane>
+                        <el-tab-pane label="外卖"></el-tab-pane>
+                    </el-tabs>
+                </el-col>
+                <!--商品展示-->
+                <el-col :span="17">
+                    <div class="often-goods">
+                        <div class="title">常用商品</div>
+                        <div class="often-goods-list">
+                            <ul>
+                                <li v-for="goods in oftenGoods" @click="addOrderList(goods)">
+                                    <span>{{goods.goodsName}}</span>
+                                    <span class="o-price">￥{{goods.price}}元</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="goods-type">
+                        <el-tabs>
+                            <el-tab-pane label="汉堡">
+                                <div>
+                                    <span class="cookList">
+                                        <li
+                                            v-for="goods in type0Goods"
+                                            @click="addOrderList(goods)"
+                                        >
+                                            <span class="foodImg">
+                                                <img class="goodsimg" :src="goods.goodsImg">
+                                            </span>
+                                            <span class="foodName">{{goods.goodsName}}</span>
+                                            <span class="foodPrice">￥{{goods.price}}元</span>
+                                        </li>
+                                    </span>
+                                </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="小食">
+                                <div>
+                                    <span class="cookList">
+                                        <li
+                                            v-for="goods in type1Goods"
+                                            @click="addOrderList(goods)"
+                                        >
+                                            <span class="foodImg">
+                                                <img class="goodsimg" :src="goods.goodsImg">
+                                            </span>
+                                            <span class="foodName">{{goods.goodsName}}</span>
+                                            <span class="foodPrice">￥{{goods.price}}元</span>
+                                        </li>
+                                    </span>
+                                </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="饮料">
+                                <div>
+                                    <span class="cookList">
+                                        <li
+                                            v-for="goods in type2Goods"
+                                            @click="addOrderList(goods)"
+                                        >
+                                            <span class="foodImg">
+                                                <img class="goodsimg" :src="goods.goodsImg">
+                                            </span>
+                                            <span class="foodName">{{goods.goodsName}}</span>
+                                            <span class="foodPrice">￥{{goods.price}}元</span>
+                                        </li>
+                                    </span>
+                                </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="套餐">
+                                <div>
+                                    <span class="cookList">
+                                        <li
+                                            v-for="goods in type3Goods"
+                                            @click="addOrderList(goods)"
+                                        >
+                                            <span class="foodImg">
+                                                <img class="goodsimg" :src="goods.goodsImg">
+                                            </span>
+                                            <span class="foodName">{{goods.goodsName}}</span>
+                                            <span class="foodPrice">￥{{goods.price}}元</span>
+                                        </li>
+                                    </span>
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -136,15 +162,16 @@ export default {
       type1Goods: [],
       type2Goods: [],
       type3Goods: [],
-      totalCount:0,
-      totalMoney:0,
+      totalCount: 0,
+      totalMoney: 0
     };
   },
 
   created() {
-    axios.get(
-      "https://www.easy-mock.com/mock/5e1abb7d7f109b0caa4d2e32/vue-pos/oftenGoods"
-    )
+    axios
+      .get(
+        "https://www.easy-mock.com/mock/5e1abb7d7f109b0caa4d2e32/vue-pos/oftenGoods"
+      )
       .then(response => {
         console.log(response);
         this.oftenGoods = response.data.oftenGoods;
@@ -154,19 +181,21 @@ export default {
         alert("网络错误，不能访问");
       });
 
-      axios.get(
+    axios
+      .get(
         "https://www.easy-mock.com/mock/5e1abb7d7f109b0caa4d2e32/vue-pos/typeGoods"
-      ).then(response => {
+      )
+      .then(response => {
         console.log(response);
         this.type0Goods = response.data.data[0];
         this.type1Goods = response.data.data[1];
         this.type2Goods = response.data.data[2];
         this.type3Goods = response.data.data[3];
-      }).catch(error => {
+      })
+      .catch(error => {
         console.log(error);
         alert("网络错误，不能访问");
       });
-
   },
   mounted() {
     var orderHeight = document.body.clientHeight;
@@ -201,16 +230,71 @@ export default {
         };
         this.tableData.push(newGoods);
       }
-
-      // 进行数量和价格的汇总计算
-      this.tableData.forEach(element => {
-      this.totalCount += element.count;
-      this.totalMoney = this.totalMoney + element.price * element.count;
-      });
-      
+      this.getAllMoney();
     },
-    delSingGoods(goods){
-        this.tableData = this.tableData.filter(o => o.goodsId == goods.goodsId);
+    delSingGoods(goods) {
+
+        
+    //      console.log(goods);
+    //   this.tableData = this.tableData.filter(o => o.goodsId == goods.goodsId);
+    //   this.getAllMoney();
+
+      this.totalCount = 0; //汇总数量清0
+      this.totalMoney = 0;
+      let isHave = false;
+      //判断是否这个商品已经存在于订单列表
+      for (let i = 0; i < this.tableData.length; i++) {
+        console.log(this.tableData[i].goodsId);
+        if (this.tableData[i].goodsId == goods.goodsId) {
+          isHave = true; //存在
+        }
+      }
+      //根据isHave的值判断订单列表中是否已经有此商品
+      if (isHave) {
+        //存在就进行数量添加
+        let arr = this.tableData.filter(o => o.goodsId == goods.goodsId);
+        arr[0].count--;
+        //console.log(arr);
+      } else {
+        //不存在就推入数组
+        let newGoods = {
+          goodsId: goods.goodsId,
+          goodsName: goods.goodsName,
+          price: goods.price,
+          count: 1
+        };
+        this.tableData.push(newGoods);
+      }
+      this.getAllMoney();
+    },
+    delAllGoods(){
+        this.tableData = [];
+        this.totalCount = 0;
+        this.totalMoney = 0;
+    },
+    // 模拟结账
+    checkout(){
+        if(this.totalCount != 0){
+            this.tableData = [];
+            this.totalCount = 0;
+            this.totalMoney = 0;
+            this.$message({
+                message:'结账成功',
+                type: 'success'
+            });
+        }else{
+            this.$message.error('请购买物品');
+        }
+    },
+    // 汇总数量和金额
+    getAllMoney() {
+        this.totalCount = 0;
+        this.totalMoney = 0;
+        // 进行数量和价格的汇总计算
+        this.tableData.forEach(element => {
+        this.totalCount += element.count;
+        this.totalMoney = this.totalMoney + element.price * element.count;
+      });
     }
   }
 };
@@ -275,7 +359,7 @@ export default {
 /* .foodImg {
   width: 1px;
 } */
-.goodsimg{
+.goodsimg {
   width: 40%;
   height: 40%;
 }
